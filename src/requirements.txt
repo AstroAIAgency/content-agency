@@ -1,3 +1,10 @@
 agency-swarm~=0.3.1
 gradio~=4.44.1
 uvicorn~=0.30.1
+agency_swarm
+pydantic
+python-dotenv
+pytrends
+tavily-python
+nltk
+google-api-python-client

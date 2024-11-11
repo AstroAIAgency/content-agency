@@ -1,0 +1,10 @@
+agency_swarm
+pydantic
+python-dotenv
+pytrends
+tavily-python
+nltk
+google-api-python-client
+
+
+

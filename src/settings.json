@@ -1,0 +1,250 @@
+[
+    {
+        "id": "asst_ygj7qjz8bqbWvwuyrEdElpkb",
+        "created_at": 1731287738,
+        "description": "Generates content ideas and writes scripts.",
+        "instructions": "agency_manifesto.md\n\n# Agent Role\n\nThe Content Manager is responsible for generating content ideas and writing scripts.\n\n# Goals\n\n1. Analyze latest news and trends using the Content Research Agent.\n2. Analyze the content performance for these trends using the YouTube Analyzer Agent.\n3. Generate content ideas.\n4. Select and confirm ideas with the user.\n5. Write a script draft.\n6. Edit script based on suggestions.\n\n# Process Workflow\n\n1. Use the Content Research Agent to gather the latest news and trends based on a topic provided by the user.\n2. Collaborate with the YouTube Analyzer Agent to assess content performance in reference to the topic provided by the user.\n3. Brainstorm and generate content ideas based on the analysis.\n4. Present ideas to the user for selection and confirmation.\n5. Draft a script for the selected idea.\n6. Revise the script based on user feedback and suggestions.\n",
+        "metadata": {},
+        "model": "gpt-4o-2024-08-06",
+        "name": "Content Manager",
+        "object": "assistant",
+        "tools": [
+            {
+                "function": {
+                    "name": "ScriptEditorTool",
+                    "description": "A tool for writing and editing scripts in Markdown format.",
+                    "parameters": {
+                        "properties": {
+                            "script_content": {
+                                "description": "The content of the script in Markdown format.",
+                                "title": "Script Content",
+                                "type": "string"
+                            },
+                            "file_path": {
+                                "description": "The file path where the script will be saved.",
+                                "title": "File Path",
+                                "type": "string"
+                            }
+                        },
+                        "required": [
+                            "file_path",
+                            "script_content"
+                        ],
+                        "type": "object"
+                    },
+                    "strict": false
+                },
+                "type": "function"
+            },
+            {
+                "function": {
+                    "name": "SendMessage",
+                    "description": "Use this tool to facilitate direct, synchronous communication between specialized agents within your agency. When you send a message using this tool, you receive a response exclusively from the designated recipient agent. To continue the dialogue, invoke this tool again with the desired recipient agent and your follow-up message. Remember, communication here is synchronous; the recipient agent won't perform any tasks post-response. You are responsible for relaying the recipient agent's responses back to the user, as the user does not have direct access to these replies. Keep engaging with the tool for continuous interaction until the task is fully resolved. Do not send more than 1 message at a time.",
+                    "parameters": {
+                        "$defs": {
+                            "recipient": {
+                                "enum": [
+                                    "Content Research Agent",
+                                    "YouTube Analyzer Agent"
+                                ],
+                                "title": "recipient",
+                                "type": "string"
+                            }
+                        },
+                        "properties": {
+                            "my_primary_instructions": {
+                                "description": "Please repeat your primary instructions step-by-step, including both completed and the following next steps that you need to perform. For multi-step, complex tasks, first break them down into smaller steps yourself. Then, issue each step individually to the recipient agent via the message parameter. Each identified step should be sent in separate message. Keep in mind, that the recipient agent does not have access to these instructions. You must include recipient agent-specific instructions in the message or additional_instructions parameters.",
+                                "title": "My Primary Instructions",
+                                "type": "string"
+                            },
+                            "recipient": {
+                                "allOf": [
+                                    {
+                                        "$ref": "#/$defs/recipient"
+                                    }
+                                ],
+                                "description": "Content Research Agent: Analyzes AI trends and compiles reports.\nYouTube Analyzer Agent: Analyzes competitors' YouTube channels to identify content gaps and top-performing topics.\n"
+                            },
+                            "message": {
+                                "description": "Specify the task required for the recipient agent to complete. Focus on clarifying what the task entails, rather than providing exact instructions.",
+                                "title": "Message",
+                                "type": "string"
+                            },
+                            "message_files": {
+                                "anyOf": [
+                                    {
+                                        "items": {
+                                            "type": "string"
+                                        },
+                                        "type": "array"
+                                    },
+                                    {
+                                        "type": "null"
+                                    }
+                                ],
+                                "default": null,
+                                "description": "A list of file ids to be sent as attachments to this message. Only use this if you have the file id that starts with 'file-'.",
+                                "examples": [
+                                    "file-1234",
+                                    "file-5678"
+                                ],
+                                "title": "Message Files"
+                            },
+                            "additional_instructions": {
+                                "anyOf": [
+                                    {
+                                        "type": "string"
+                                    },
+                                    {
+                                        "type": "null"
+                                    }
+                                ],
+                                "default": null,
+                                "description": "Additional context or instructions for the recipient agent about the task. For example, additional information provided by the user or other agents.",
+                                "title": "Additional Instructions"
+                            }
+                        },
+                        "required": [
+                            "message",
+                            "my_primary_instructions",
+                            "recipient"
+                        ],
+                        "type": "object"
+                    },
+                    "strict": false
+                },
+                "type": "function"
+            }
+        ],
+        "response_format": "auto",
+        "temperature": 0.7,
+        "tool_resources": {
+            "code_interpreter": null,
+            "file_search": null
+        },
+        "top_p": 1.0
+    },
+    {
+        "id": "asst_fQlfkLkCO8v68G6gwGT4u8MW",
+        "created_at": 1731287738,
+        "description": "Analyzes AI trends and compiles reports.",
+        "instructions": "agency_manifesto.md\n\n# Agent Role\n\nThe Content Research Agent is responsible for analyzing AI trends and compiling reports.\n\n# Goals\n\n1. Gather the latest news and trends in a topic provided by the user.\n2. Extract and analyze keywords related to topic provided by the user.\n3. Provide insights and reports to the Content Manager.\n\n# Process Workflow\n\n1. Use the Web Search Tool to gather the latest news and trends for the topic provided by the user.\n2. Extract keywords from the gathered content using the Keyword Extractor Tool.\n3. Analyze the popularity and relevance of these keywords using the Keyword Analyzer Tool.\n4. Compile a report of the findings and share it with the Content Manager.\n",
+        "metadata": {},
+        "model": "gpt-4o-2024-08-06",
+        "name": "Content Research Agent",
+        "object": "assistant",
+        "tools": [
+            {
+                "function": {
+                    "name": "WebSearchTool",
+                    "description": "A tool for searching the web using the Tavily API.",
+                    "parameters": {
+                        "properties": {
+                            "query": {
+                                "description": "The search query to execute.",
+                                "title": "Query",
+                                "type": "string"
+                            }
+                        },
+                        "required": [
+                            "query"
+                        ],
+                        "type": "object"
+                    },
+                    "strict": false
+                },
+                "type": "function"
+            },
+            {
+                "function": {
+                    "name": "KeywordExtractorTool",
+                    "description": "A tool for extracting keywords from text using NLTK.",
+                    "parameters": {
+                        "properties": {
+                            "text": {
+                                "description": "The text from which to extract keywords.",
+                                "title": "Text",
+                                "type": "string"
+                            }
+                        },
+                        "required": [
+                            "text"
+                        ],
+                        "type": "object"
+                    },
+                    "strict": false
+                },
+                "type": "function"
+            },
+            {
+                "function": {
+                    "name": "KeywordAnalyzerTool",
+                    "description": "A tool for analyzing keywords using Pytrends.",
+                    "parameters": {
+                        "properties": {
+                            "keywords": {
+                                "description": "A list of keywords to analyze.",
+                                "items": {},
+                                "title": "Keywords",
+                                "type": "array"
+                            }
+                        },
+                        "required": [
+                            "keywords"
+                        ],
+                        "type": "object"
+                    },
+                    "strict": false
+                },
+                "type": "function"
+            }
+        ],
+        "response_format": "auto",
+        "temperature": 0.5,
+        "tool_resources": {
+            "code_interpreter": null,
+            "file_search": null
+        },
+        "top_p": 1.0
+    },
+    {
+        "id": "asst_PxKgDnWKnlerY7tCcR28dvi4",
+        "created_at": 1731287739,
+        "description": "Analyzes competitors' YouTube channels to identify content gaps and top-performing topics.",
+        "instructions": "agency_manifesto.md\n\n# Agent Role\n\nThe YouTube Analyzer Agent is responsible for analyzing competitors' YouTube channels to identify content gaps and top-performing topics.\n\n# Goals\n\n1. Search for well-performing topics on YouTube.\n2. Analyze competitor channels for these topics.\n3. Analyze videos from the latest channels.\n4. Identify content opportunities.\n5. Compile a report and send it back to the user.\n\n# Process Workflow\n\n1. **Search for Topics**: Use the YouTube Analyzer Tool to search for well-performing topics on YouTube based on specified keywords.\n2. **Analyze Competitor Channels**: Identify and analyze competitor channels that are performing well in these topics.\n3. **Analyze Videos**: For the identified channels, analyze the latest videos to gather detailed statistics such as views, likes, comments, and engagement metrics.\n4. **Identify Content Opportunities**: Based on the analysis, identify content gaps and opportunities where new content can be created to capture audience interest.\n5. **Compile Report**: Compile a comprehensive report detailing the findings, including top-performing topics, competitor analysis, and content opportunities.\n6. **Send Report**: Send the compiled report back to the user for review and action.\n",
+        "metadata": {},
+        "model": "gpt-4o-2024-08-06",
+        "name": "YouTube Analyzer Agent",
+        "object": "assistant",
+        "tools": [
+            {
+                "function": {
+                    "name": "YouTubeAnalyzerTool",
+                    "description": "A tool for analyzing YouTube channels using the YouTube Data API.",
+                    "parameters": {
+                        "properties": {
+                            "keywords": {
+                                "description": "Keywords to search for competitor channels.",
+                                "title": "Keywords",
+                                "type": "string"
+                            }
+                        },
+                        "required": [
+                            "keywords"
+                        ],
+                        "type": "object"
+                    },
+                    "strict": false
+                },
+                "type": "function"
+            }
+        ],
+        "response_format": "auto",
+        "temperature": 0.5,
+        "tool_resources": {
+            "code_interpreter": null,
+            "file_search": null
+        },
+        "top_p": 1.0
+    }
+]
